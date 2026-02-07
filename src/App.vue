@@ -1,30 +1,34 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue';
+import HeroSection from './components/HeroSection.vue';
+import GallerySection from './components/GallerySection.vue'; // <-- Importamos
+import MusicPlayer from './components/MusicPlayer.vue';
+
+const playerRef = ref(null);
+
+const scrollToGallery = () => {
+    // 1. Iniciar música
+    if (playerRef.value) {
+        playerRef.value.playMusic();
+    }
+    
+    // 2. Scroll suave hasta la galería
+    const galleryElement = document.getElementById('gallery');
+    if (galleryElement) {
+        galleryElement.scrollIntoView({ behavior: 'smooth' });
+    }
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+  <main>
+    <HeroSection @start="scrollToGallery" />
+    
+    <GallerySection />
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+    <MusicPlayer 
+        ref="playerRef" 
+        song-src="/music/song.mp3" 
+    />
+  </main>
+</template>
