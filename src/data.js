@@ -48,13 +48,35 @@ export const memories = [
         description: "Nuestro primer año nuevo juntos."
     },
     {
-        id: 4,
-        type: "photo",
-        url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536141/20240101_030828_pmmbcl.jpg",
-        title: "Año Nuevo 2024",
-        date: "2024-01-01",
-        description: "Nuestro primer año nuevo juntos."
-    },
+        type: "album",
+        id: "album2",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770726272/20240126_115915_clblca.jpg",
+        title: "Viaje a Santa Rosa",
+        date: "2024-01-26",
+        description: "Nuestra primer escapada juntos.",
+        photos: [
+            {   
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770726272/20240126_115915_clblca.jpg",
+                caption: "1"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770726228/20240126_114309_loo1ii.jpg",
+                caption: "2"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770726227/IMG-20240126-WA0019_scg24x.jpg",
+                caption: "3"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536077/IMG-20240128-WA0026_pjanam.jpg",
+                caption: "4"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536139/20240128_121731_thfrtv.jpg",
+                caption: "5"
+            }
+        ]
+    }
     
 ];
 

@@ -1,0 +1,83 @@
+<template>
+  <section id="memories" class="mixed-container">
+    <h2>Nuestros Momentos</h2>
+
+    <div class="masonry-grid">
+        <div v-for="(item, index) in memories" :key="index" class="grid-item">
+            
+            <div 
+                v-if="item.type === 'album'" 
+                class="card album-card"
+                @click="openAlbum(item)"
+            >
+                <div class="media-wrapper">
+                    <img :src="getOptimizedUrl(item.cover, 600)" :alt="item.title">
+                    <div class="album-badge">📂 {{ item.photos.length }} fotos</div>
+                </div>
+                <div class="card-footer">
+                    <span class="date-tag">{{ formatDate(item.date) }}</span>
+                    <h3>{{ item.title }}</h3>
+                    <p class="desc-preview">{{ item.description }}</p>
+                </div>
+            </div>
+
+            <div 
+                v-else 
+                class="card photo-card"
+                @click="openSinglePhoto(item)"
+            >
+                <div class="media-wrapper">
+                    <img :src="getOptimizedUrl(item.url, 600)" loading="lazy">
+                </div>
+                <div class="card-footer">
+                    <span class="date-tag">{{ formatDate(item.date) }}</span>
+                    <h3 v-if="item.title">{{ item.title }}</h3>
+                    <p class="desc-preview">{{ item.description }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <Transition name="fade">
+        <div v-if="isViewerOpen" class="viewer-overlay">
+            <button class="btn-close" @click="closeViewer">✕</button>
+            
+            <div class="viewer-content">
+                <button v-if="currentViewerPhotos.length > 1" class="nav-btn prev" @click.stop="prevPhoto">❮</button>
+                
+                <div class="photo-wrapper">
+                    <div class="image-stage">
+                        <Transition :name="transitionName">
+                            <img 
+                                :src="getOptimizedUrl(currentPhoto.url, 1200)" 
+                                class="main-photo"
+                                :key="currentPhoto.url" 
+                                alt="Foto del recuerdo"
+                            >
+                        </Transition>
+                    </div>
+                    
+                    <div class="info-box">
+                        <div class="info-header">
+                            <h3>{{ viewerMetadata.title }}</h3>
+                            <span class="info-date">{{ viewerMetadata.date }}</span>
+                        </div>
+                        
+                        <Transition name="fade" mode="out-in">
+                            <p class="caption" :key="currentCaption">{{ currentCaption }}</p>
+                        </Transition>
+
+                        <p v-if="currentViewerPhotos.length > 1" class="counter">
+                            {{ currentPhotoIndex + 1 }} / {{ currentViewerPhotos.length }}
+                        </p>
+                    </div>
+                </div>
+
+                <button v-if="currentViewerPhotos.length > 1" class="nav-btn next" @click.stop="nextPhoto">❯</button>
+            </div>
+        </div>
+    </Transition>
+
+  </section>
+</template>
