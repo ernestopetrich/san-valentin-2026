@@ -20,7 +20,7 @@ export const memories = [
     {
         type: "album",
         id: "album1",
-        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536150/20231027_235723_ovt2f2.jpg",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536077/IMG-20231029-WA0024_f6sgle.jpg",
         title: "Fotitos lindas de nosotros",
         date: "2023-11-04",
         description: "Un album con fotos lindas de nosotros.",
@@ -38,7 +38,24 @@ export const memories = [
                 caption: "4"
             }
         ]
-    }
+    },
+    {
+        id: 3,
+        type: "photo",
+        url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536141/20240101_030828_pmmbcl.jpg",
+        title: "Año Nuevo 2024",
+        date: "2024-01-01",
+        description: "Nuestro primer año nuevo juntos."
+    },
+    {
+        id: 4,
+        type: "photo",
+        url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536141/20240101_030828_pmmbcl.jpg",
+        title: "Año Nuevo 2024",
+        date: "2024-01-01",
+        description: "Nuestro primer año nuevo juntos."
+    },
+    
 ];
 
 
