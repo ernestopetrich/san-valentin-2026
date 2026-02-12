@@ -57,25 +57,33 @@ export const memories = [
         photos: [
             {   
                 url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770726272/20240126_115915_clblca.jpg",
-                caption: "1"
+                caption: "Que lindos que estamos cuando estamos juntos"
             },
             {
                 url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770726228/20240126_114309_loo1ii.jpg",
-                caption: "2"
+                caption: "Fuimos a la hoya"
             },
             {
                 url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770726227/IMG-20240126-WA0019_scg24x.jpg",
-                caption: "3"
+                caption: "Me fleche todo"
             },
             {
                 url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536077/IMG-20240128-WA0026_pjanam.jpg",
-                caption: "4"
+                caption: "El mirador de santa rosa"
             },
             {
                 url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536139/20240128_121731_thfrtv.jpg",
-                caption: "5"
+                caption: "Volviendooo"
             }
         ]
+    },
+    {
+        id: 4,
+        type: "photo",
+        url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536075/IMG-20240427-WA0045_geggih.jpg",
+        title: "Tu cumple, mi vida",
+        date: "2024-04-28",
+        description: "Celebramos tu cumple juntos por primera vez."
     }
     
 ];
