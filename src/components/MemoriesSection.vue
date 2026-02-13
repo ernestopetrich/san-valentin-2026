@@ -2,12 +2,18 @@
 import { ref, computed, onMounted } from 'vue';
 import { memories } from '../data';
 
-// --- ESTADO ---
+// --- ESTADO GENERAL ---
 const isViewerOpen = ref(false);
+const isLetterOpen = ref(false); // Nuevo estado para la carta
+
+// Datos para el visor de fotos
 const currentViewerPhotos = ref([]); 
 const currentPhotoIndex = ref(0);
 const viewerMetadata = ref({ title: '', date: '' });
 const transitionName = ref('slide-next');
+
+// Datos para la carta
+const currentLetterContent = ref({});
 
 // --- UTILIDADES ---
 const getOptimizedUrl = (url, width = 800) => {
@@ -24,18 +30,15 @@ const formatDate = (dateString) => {
 
 const getCover = (item) => item.type === 'album' ? item.cover : item.url;
 
-// Ordenar cronológicamente
+// Ordenar cronológicamente (antiguas a nuevas)
 const sortedMemories = computed(() => {
     return [...memories].sort((a, b) => new Date(a.date) - new Date(b.date));
 });
 
 // --- ANIMACIÓN SCROLL REVEAL ---
 onMounted(() => {
-    // Configuración del "Ojo":
-    // threshold: 0.1 -> Se activa apenas se ve el 10% del elemento (muy sensible para móvil)
-    // rootMargin: "0px 0px -50px 0px" -> Margen de seguridad para que no aparezca pegado al borde
     const observerOptions = {
-        threshold: 0.1,
+        threshold: 0.1, // Se activa al ver el 10%
         rootMargin: "0px 0px -50px 0px"
     };
 
@@ -43,8 +46,7 @@ onMounted(() => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('show');
-                // Opcional: Dejar de observar una vez que ya apareció (ahorra recursos)
-                observer.unobserve(entry.target); 
+                observer.unobserve(entry.target); // Solo anima una vez
             }
         });
     }, observerOptions);
@@ -53,7 +55,7 @@ onMounted(() => {
     hiddenElements.forEach((el) => observer.observe(el));
 });
 
-// --- LÓGICA DE APERTURA ---
+// --- LÓGICA DE APERTURA (FOTOS / ALBUM) ---
 const openItem = (item) => {
     if (item.type === 'album') {
         currentViewerPhotos.value = item.photos;
@@ -103,6 +105,18 @@ const currentCaption = computed(() => {
     const photo = currentPhoto.value;
     return photo.caption || photo.description || viewerMetadata.value.description;
 });
+
+// --- LÓGICA DE APERTURA (CARTA) ---
+const openLetter = (item) => {
+    currentLetterContent.value = item;
+    isLetterOpen.value = true;
+    document.body.style.overflow = 'hidden';
+};
+
+const closeLetter = () => {
+    isLetterOpen.value = false;
+    document.body.style.overflow = 'auto';
+};
 </script>
 
 <template>
@@ -118,11 +132,29 @@ const currentCaption = computed(() => {
             class="timeline-item scroll-hidden" 
         >
             <div class="timeline-dot">
-                <div class="dot-inner"></div>
+                <div class="dot-inner" :class="{ 'heart-dot': item.type === 'letter' }"></div>
                 <span class="timeline-date">{{ formatDate(item.date) }}</span>
             </div>
 
-            <div class="timeline-content" @click="openItem(item)">
+            <div 
+                v-if="item.type === 'letter'" 
+                class="timeline-content letter-card" 
+                @click="openLetter(item)"
+            >
+                <div class="content-preview letter-preview">
+                    <div class="letter-icon">💌</div>
+                    <div class="content-info">
+                        <h3>{{ item.title }}</h3>
+                        <p class="click-hint">Toca para abrir</p>
+                    </div>
+                </div>
+            </div>
+
+            <div 
+                v-else 
+                class="timeline-content" 
+                @click="openItem(item)"
+            >
                 <div class="content-preview">
                     <span v-if="item.type === 'album'" class="album-badge">📂 Álbum</span>
                     <img :src="getOptimizedUrl(getCover(item), 400)" loading="lazy">
@@ -138,14 +170,17 @@ const currentCaption = computed(() => {
     <Transition name="fade">
         <div v-if="isViewerOpen" class="viewer-overlay">
             <button class="btn-close" @click="closeViewer">✕</button>
+            
             <div class="viewer-content">
                 <button v-if="currentViewerPhotos.length > 1" class="nav-btn prev" @click.stop="prevPhoto">❮</button>
+                
                 <div class="photo-wrapper">
                     <div class="image-stage">
                         <Transition :name="transitionName">
                             <img :src="getOptimizedUrl(currentPhoto.url, 1200)" class="main-photo" :key="currentPhoto.url">
                         </Transition>
                     </div>
+                    
                     <div class="info-box">
                         <div class="info-header">
                             <h3>{{ viewerMetadata.title }}</h3>
@@ -159,14 +194,33 @@ const currentCaption = computed(() => {
                         </p>
                     </div>
                 </div>
+
                 <button v-if="currentViewerPhotos.length > 1" class="nav-btn next" @click.stop="nextPhoto">❯</button>
             </div>
         </div>
     </Transition>
+
+    <Transition name="fade">
+        <div v-if="isLetterOpen" class="letter-overlay" @click.self="closeLetter">
+            <div class="letter-paper">
+                <button class="btn-close-letter" @click="closeLetter">✕</button>
+                <div class="letter-body">
+                    <h2>{{ currentLetterContent.title }}</h2>
+                    <span class="letter-date">{{ formatDate(currentLetterContent.date) }}</span>
+                    
+                    <p class="letter-text">{{ currentLetterContent.content }}</p>
+                    
+                    <div class="letter-footer">❤️</div>
+                </div>
+            </div>
+        </div>
+    </Transition>
+
   </section>
 </template>
 
 <style scoped>
+/* --- ESTILOS GENERALES --- */
 .timeline-wrapper {
     padding: 4rem 1rem;
     background-color: #fff0f3;
@@ -177,9 +231,9 @@ const currentCaption = computed(() => {
 h2 {
     text-align: center;
     color: #e63946;
-    margin-bottom: 4rem; /* Más espacio bajo el título */
+    margin-bottom: 4rem;
     font-size: 2.5rem;
-    font-family: 'Dancing Script', cursive;
+    font-family: 'Dancing Script', cursive; /* Asegúrate de importar la fuente */
 }
 
 /* --- ESTRUCTURA TIMELINE --- */
@@ -187,7 +241,7 @@ h2 {
     position: relative;
     max-width: 900px;
     margin: 0 auto;
-    padding-bottom: 100px; /* Espacio extra al final */
+    padding-bottom: 150px;
 }
 
 .timeline-line {
@@ -204,43 +258,29 @@ h2 {
 
 .timeline-item {
     position: relative;
-    /* ESPACIO AUMENTADO: Esto es clave para que no se vean juntas */
-    margin-bottom: 200px; 
-    /* ALTURA MÍNIMA: Reserva espacio antes de cargar la imagen */
+    margin-bottom: 200px; /* Distancia amplia entre puntos */
     min-height: 200px;
-    
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* --- ANIMACIÓN SCROLL REVEAL --- */
-.scroll-hidden {
-    opacity: 0;
-    transform: translateY(100px); /* Empieza 100px más abajo */
-    transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+/* Scroll Reveal */
+.scroll-hidden { opacity: 0; transform: translateY(100px); transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.show { opacity: 1; transform: translateY(0); }
 
-.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* --- PUNTO Y FECHA --- */
+/* --- PUNTOS Y FECHAS (Corrección Transparencia) --- */
 .timeline-dot {
     position: absolute;
     z-index: 2;
-    
-    /* CORRECCIÓN 1: Fondo transparente para no tapar sombras */
-    background: transparent; 
-    
-    padding: 0; /* Quitamos padding innecesario */
+    background: transparent; /* Transparente para no cortar sombras */
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 40px; /* Ancho fijo para centrar bien */
+    width: 40px;
 }
 
 .dot-inner {
@@ -248,59 +288,56 @@ h2 {
     height: 20px;
     background: #e63946;
     border-radius: 50%;
-    
-    /* CORRECCIÓN 2: El borde grueso del color del fondo (#fff0f3) hace el recorte */
-    border: 4px solid #fff0f3; 
-    
-    /* Una sombra suave para que destaque sobre la línea */
-    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.3); 
-    
+    border: 4px solid #fff0f3; /* Borde del color de fondo simula el recorte */
+    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.3);
     transition: transform 0.3s;
 }
 
-/* Efecto al pasar el mouse por el punto */
-.timeline-item:hover .dot-inner {
-    transform: scale(1.4);
-    background: white;
-    border-color: #e63946;
+.timeline-item:hover .dot-inner { transform: scale(1.4); background: white; border-color: #e63946; }
+
+/* Punto especial Corazón (Carta) */
+.heart-dot {
+    background: #e63946 !important;
+    border-color: #e63946 !important;
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    15% { transform: scale(1.3); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.15); }
+    60% { transform: scale(1); }
 }
 
 .timeline-date {
-    margin-top: 8px; /* Un poco de aire entre punto y fecha */
+    margin-top: 8px;
     font-weight: bold;
     color: #e63946;
     background: white;
     padding: 4px 12px;
     border-radius: 15px;
     font-size: 0.85rem;
-    
-    /* Sombra para que la fecha flote bonita sobre la línea */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
-    
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     white-space: nowrap;
-    z-index: 3; /* Asegura que la fecha esté encima de la línea */
+    z-index: 3;
 }
 
-/* --- LA TARJETA (CONTENT) --- */
+/* --- TARJETAS (FOTOS/ALBUMS/CARTAS) --- */
 .timeline-content {
     position: absolute;
     width: 320px;
-
-    /* CORRECCIÓN: Usamos calc() para asegurar una distancia fija de 110px */
-    left: calc(50% + 110px); 
-    
-    top: -10px; /* Un pequeño ajuste vertical para que se alinee mejor con el punto */
+    /* Corrección PC: Distancia fija desde el centro */
+    left: calc(50% + 110px);
+    top: -10px;
     cursor: pointer;
     transition: transform 0.3s ease;
 }
 
 /* Pares a la izquierda */
 .timeline-item:nth-child(even) .timeline-content {
-    left: auto; /* Reseteamos el left */
-    
-    /* CORRECCIÓN: Lo mismo para la derecha */
+    left: auto;
     right: calc(50% + 110px);
-    
     text-align: right;
 }
 
@@ -314,10 +351,7 @@ h2 {
     overflow: hidden;
 }
 
-.content-preview:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(230, 57, 70, 0.2);
-}
+.content-preview:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(230, 57, 70, 0.2); }
 
 .content-preview img {
     width: 100%;
@@ -337,177 +371,120 @@ h2 {
 .content-info h3 { margin: 0; font-size: 1.1rem; color: #222; }
 .desc-mini { font-size: 0.85rem; color: #666; margin: 5px 0 0 0; line-height: 1.4; }
 
-/* Triángulos */
+/* Triángulos PC */
 .content-preview::before {
-    content: ''; 
-    position: absolute; 
-    top: 25px; 
-    
-    /* Lo movemos más afuera para alcanzar la línea */
-    left: -14px; 
-    
+    content: ''; position: absolute; top: 25px; left: -14px; /* Ajustado */
     width: 0; height: 0;
-    
-    /* Hacemos el triángulo un poco más largo */
-    border-top: 10px solid transparent; 
-    border-bottom: 10px solid transparent; 
-    border-right: 14px solid white; /* Antes era 10px, ahora 14px */
+    border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 14px solid white;
 }
-
 .timeline-item:nth-child(even) .content-preview::before {
-    left: auto; 
-    right: -14px; /* Lo mismo para el lado derecho */
-    border-right: none; 
-    border-left: 14px solid white;
+    left: auto; right: -14px;
+    border-right: none; border-left: 14px solid white;
 }
 
-/* --- VERSIÓN MÓVIL CORREGIDA (Centrado Perfecto) --- */
-@media (max-width: 768px) {
-    /* 1. Ajustes del Timeline (Mantenemos la línea a la izquierda) */
-    .timeline-container { padding-left: 0; }
-    .timeline-line { left: 25px; transform: none; }
-    .timeline-item { justify-content: flex-start; margin-bottom: 150px; padding-left: 0; }
-    .timeline-dot { position: absolute; left: 13px; top: 0; background: none; padding: 0; }
-    .timeline-date { position: absolute; left: 35px; top: -4px; }
-    .timeline-content { position: relative; left: 50px; top: 40px; width: calc(100% - 70px); right: auto; text-align: left; }
-    .timeline-item:nth-child(even) .timeline-content { left: 50px; right: auto; text-align: left; }
-    .content-preview::before { display: none; }
-    
-    /* --- 2. AJUSTES DEL VISOR (LIGHTBOX) --- */
-    
-    .viewer-content { 
-        padding: 0; 
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
-
-    /* EL ESCENARIO: Ocupa toda la pantalla */
-    .image-stage { 
-        height: 100dvh; /* Altura dinámica completa */
-        width: 100vw;   /* Ancho completo */
-        background: black;
-        
-        /* Flexbox para asegurar centrado absoluto de la caja */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* LA FOTO: Se contiene en el centro */
-    .main-photo {
-        position: absolute; /* Vital para las transiciones */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        
-        /* ESTO CENTRA LA IMAGEN VISUALMENTE DENTRO DE LA CAJA */
-        object-fit: contain; 
-        
-        z-index: 1; /* Detrás del texto */
-    }
-
-    /* --- CONTROLES FLOTANTES --- */
-    /* Centrados verticalmente */
-    .nav-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%); /* Centrado vertical perfecto */
-        background: rgba(255, 255, 255, 0.15); /* Sutil */
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        z-index: 3005; /* Encima de todo */
-        padding: 0;
-        border: 1px solid rgba(255,255,255,0.2);
-        backdrop-filter: blur(4px);
-    }
-
-    .prev { left: 10px; }
-    .next { right: 10px; }
-
-    /* Botón cerrar */
-    .btn-close {
-        top: 20px;
-        right: 20px;
-        background: rgba(0, 0, 0, 0.5);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        z-index: 3010;
-    }
-
-/* --- CAJA DE TEXTO (CAPTION) --- */
-    .info-box {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        
-        /* CORRECCIÓN 1: Usamos right:0 en lugar de width:100% para evitar desbordes */
-        right: 0;
-        width: auto; 
-        
-        /* CORRECCIÓN 2: Asegura que el padding no expanda la caja */
-        box-sizing: border-box; 
-        
-        /* Alineación central forzada */
-        text-align: center; 
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* Centra los hijos flex (header, caption, etc) */
-        
-        padding: 60px 20px 40px 20px; 
-        
-        /* El mismo degradado de antes */
-        background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.5) 70%, transparent 100%);
-        z-index: 3003;
-    }
-
-    /* Asegúrate también de que el header ocupe el ancho correcto */
-    .info-header {
-        width: 100%;
-        display: flex;       /* Nuevo */
-        flex-direction: column; /* Nuevo */
-        align-items: center; /* Nuevo: Centra título y fecha internamente */
-        margin-bottom: 8px;
-    }
-    
-    /* Y quitamos márgenes laterales que puedan molestar */
-    .caption, .info-header h3, .info-date {
-        margin-left: 0;
-        margin-right: 0;
-        text-align: center;
-    }
-    
-    .counter { 
-        margin-top: 10px; 
-        font-size: 0.8rem; 
-        opacity: 0.6; 
-        width: 100%;
-        text-align: center;
-    }
+/* Estilos específicos Carta */
+.letter-preview {
+    background: #e63946;
+    color: white;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 150px; border: 2px solid #ffccd5;
 }
+.letter-icon { font-size: 3rem; margin-bottom: 10px; }
+.letter-preview .content-info h3 { color: white; text-align: center; }
+.click-hint { font-size: 0.8rem; color: #ffccd5; margin-top: 5px; animation: pulse 2s infinite; }
 
-/* --- VISOR STYLES (Canvas Fijo) --- */
+/* --- VISOR FOTOS (PC) --- */
 .viewer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; display: flex; align-items: center; justify-content: center; }
-.viewer-content { display: flex; align-items: center; width: 100%; height: 100%; justify-content: space-between; padding: 20px;}
+.viewer-content { display: flex; align-items: center; width: 100%; height: 100%; justify-content: space-between; padding: 50px;}
 .photo-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; margin: auto; }
 .image-stage { width: 100%; height: 75vh; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
 .main-photo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); will-change: transform, opacity; }
+
 .info-box { margin-top: 15px; text-align: center; color: white; width: 100%; }
 .info-header h3 { margin: 0; font-size: 1.5rem; color: #fff; }
 .info-date { font-size: 0.9rem; color: #ffccd5; display: block; margin-bottom: 5px; }
 .caption { font-size: 1rem; margin-top: 5px; font-weight: 300; }
 .counter { color: #888; font-size: 0.8rem; margin-top: 10px; }
+
 .nav-btn { background: none; border: none; color: white; font-size: 3rem; cursor: pointer; padding: 0 20px; z-index: 3001; }
 .btn-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; z-index: 3001; }
+
+/* --- MODAL CARTA (PAPEL) --- */
+.letter-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 4000;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.letter-paper {
+    background: #fffdf7; width: 100%; max-width: 600px; padding: 40px; border-radius: 5px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5); position: relative; max-height: 90vh; overflow-y: auto;
+}
+.letter-body { text-align: center; font-family: 'Playfair Display', serif; }
+.letter-body h2 { color: #e63946; font-size: 2.5rem; margin-bottom: 10px; }
+.letter-date { display: block; color: #888; font-family: sans-serif; font-size: 0.9rem; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px; }
+.letter-text { font-size: 1.5rem; line-height: 1.5rem; color: #444; white-space: pre-line; text-align: left; }
+.letter-footer { font-size: 2rem; margin-top: 40px; }
+.btn-close-letter { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.5rem; color: #aaa; cursor: pointer; }
+
+/* --- TRANSICIONES --- */
 .slide-next-enter-active, .slide-next-leave-active, .slide-prev-enter-active, .slide-prev-leave-active { transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.5s ease; }
 .slide-next-enter-from { transform: translate(100%, 0); opacity: 0; } .slide-next-leave-to { transform: translate(-100%, 0); opacity: 0; }
 .slide-prev-enter-from { transform: translate(-100%, 0); opacity: 0; } .slide-prev-leave-to { transform: translate(100%, 0); opacity: 0; }
 .fade-enter-active, .fade-leave-active { transition: opacity 0.3s; } .fade-enter-from, .fade-leave-to { opacity: 0; }
+@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+/* --- VERSIÓN MÓVIL (CORREGIDA COMPLETA) --- */
+@media (max-width: 768px) {
+    /* Timeline ajustado */
+    .timeline-container { padding-left: 0; }
+    .timeline-line { left: 25px; transform: none; }
+    .timeline-item { justify-content: flex-start; margin-bottom: 150px; padding-left: 0; }
+    .timeline-dot { position: absolute; left: 7px; top: 0; background: none; padding: 0; }
+    .timeline-date { position: absolute; left: 45px; top: -6px; }
+    .timeline-content { position: relative; left: 50px; top: 40px; width: calc(100% - 70px); right: auto; text-align: left; }
+    .timeline-item:nth-child(even) .timeline-content { left: 50px; right: auto; text-align: left; }
+    .content-preview::before { display: none; }
+    
+    /* VISOR INMERSIVO Y CENTRADO */
+    .viewer-content { padding: 0; position: relative; width: 100%; height: 100%; }
+    
+    .image-stage { 
+        height: 100dvh; width: 100vw; background: black;
+        display: flex; justify-content: center; align-items: center; 
+    }
+    .main-photo { 
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+        object-fit: contain; z-index: 1; 
+    }
+
+    /* BOTONES FLOTANTES */
+    .nav-btn {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15); width: 50px; height: 50px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem; z-index: 3005; padding: 0;
+        border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(4px);
+    }
+    .prev { left: 10px; } .next { right: 10px; }
+    .btn-close { top: 20px; right: 20px; background: rgba(0, 0, 0, 0.5); width: 40px; height: 40px; z-index: 3010; }
+
+    /* INFO BOX CENTRADA */
+    .info-box {
+        position: absolute; bottom: 0; left: 0; right: 0; width: auto;
+        box-sizing: border-box; text-align: center;
+        display: flex; flex-direction: column; align-items: center;
+        padding: 60px 20px 40px 20px;
+        background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.5) 70%, transparent 100%);
+        z-index: 3003;
+    }
+    .info-header { width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 8px; }
+    .info-header h3 { font-size: 1.3rem; margin-bottom: 4px; color: white; margin-left: 0; margin-right: 0; }
+    .caption, .info-date { text-align: center; margin-left: 0; margin-right: 0; }
+    .caption { font-size: 1rem; line-height: 1.5; color: #eee; max-width: 90%; }
+    .counter { margin-top: 10px; font-size: 0.8rem; opacity: 0.6; width: 100%; text-align: center; }
+
+    /* Ajuste modal carta */
+    .letter-paper { padding: 30px 20px; }
+    .letter-text { font-size: 1.3rem; }
+}
 </style>
