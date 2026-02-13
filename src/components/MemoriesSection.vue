@@ -361,50 +361,95 @@ h2 {
     border-left: 14px solid white;
 }
 
-/* --- MÓVIL (Ajustado para que funcione la animación) --- */
+/* --- VERSIÓN MÓVIL (Foto Inmersiva) --- */
 @media (max-width: 768px) {
+    /* 1. Ajustes del Timeline (Ya los tenías, los mantenemos) */
     .timeline-container { padding-left: 0; }
-    
-    /* Línea bien a la izquierda */
     .timeline-line { left: 25px; transform: none; }
-    
-    .timeline-item {
-        justify-content: flex-start;
-        /* Reducimos un poco el margen en móvil, pero sigue siendo amplio */
-        margin-bottom: 150px; 
-        padding-left: 0;
-    }
-
-    .timeline-dot {
-        position: absolute;
-        left: 7px; /* Alineado al centro de la línea (25px) */
-        top: 0;
-        background: none;
-        padding: 0;
-    }
-    
-    .timeline-date {
-        position: absolute;
-        left: 40px; /* Fecha al lado */
-        top: -6px;
-    }
-
-    .timeline-content {
-        position: relative;
-        left: 50px; /* Separado de la línea */
-        top: 40px; /* Debajo de la fecha */
-        width: calc(100% - 70px); /* Ocupa el resto de la pantalla */
-        right: auto;
-        text-align: left;
-    }
-    
-    .timeline-item:nth-child(even) .timeline-content {
-        left: 50px;
-        right: auto;
-        text-align: left;
-    }
-
+    .timeline-item { justify-content: flex-start; margin-bottom: 150px; padding-left: 0; }
+    .timeline-dot { position: absolute; left: 13px; top: 0; background: none; padding: 0; }
+    .timeline-date { position: absolute; left: 35px; top: -4px; }
+    .timeline-content { position: relative; left: 50px; top: 40px; width: calc(100% - 70px); right: auto; text-align: left; }
+    .timeline-item:nth-child(even) .timeline-content { left: 50px; right: auto; text-align: left; }
     .content-preview::before { display: none; }
+    
+    /* --- 2. AJUSTES DEL VISOR (LIGHTBOX) EN MÓVIL --- */
+    
+    /* Quitamos el padding para aprovechar cada píxel */
+    .viewer-content { 
+        padding: 0; 
+        position: relative; /* Necesario para posicionar hijos absolutos */
+    }
+
+    /* El escenario ocupa TODA la pantalla */
+    .image-stage { 
+        height: 100dvh; /* dvh = dynamic viewport height (mejor para móviles) */
+        width: 100vw;
+        background: black; /* Fondo negro para rellenar bordes si la foto no encaja */
+    }
+
+    /* La foto se ajusta pero sin recortarse */
+    .main-photo {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; /* Mantiene proporción */
+    }
+
+    /* --- BOTONES DE NAVEGACIÓN FLOTANTES --- */
+    .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.3); /* Círculo semitransparente */
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        z-index: 3002; /* Encima de la foto */
+        padding: 0;
+        /* Quitamos el hover effect en móvil porque confunde */
+    }
+
+    .prev { left: 15px; }
+    .next { right: 15px; }
+
+    /* Botón cerrar más visible */
+    .btn-close {
+        top: 15px;
+        right: 15px;
+        background: rgba(0, 0, 0, 0.4);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        z-index: 3005;
+    }
+
+    /* --- CAJA DE TEXTO (CAPTION) --- */
+    .info-box {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 40px 20px 30px 20px; /* Padding extra abajo para móviles modernos (barra home) */
+        
+        /* DEGRADADO MÁGICO: Hace que el texto blanco se lea sobre cualquier foto */
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+        
+        z-index: 3003;
+        text-align: left; /* Alineamos a la izquierda para leer mejor */
+    }
+
+    .info-header h3 { font-size: 1.2rem; margin-bottom: 5px; }
+    .info-date { font-size: 0.8rem; opacity: 0.8; margin-bottom: 5px; }
+    .caption { font-size: 0.95rem; line-height: 1.4; }
+    .counter { text-align: right; font-size: 0.75rem; opacity: 0.6; margin-top: 5px; }
 }
 
 /* --- VISOR STYLES (Canvas Fijo) --- */

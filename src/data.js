@@ -84,6 +84,28 @@ export const memories = [
         title: "Tu cumple, mi vida",
         date: "2024-04-28",
         description: "Celebramos tu cumple juntos por primera vez."
+    },
+    {
+        id: "album3",
+        type: "album",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770767404/IMG-20240430-WA0014_qkxmze.jpg",
+        title: "Familia de 3",
+        date: "2024-04-30",
+        description: "Fotos con la Vienna",
+        photos: [
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770767404/IMG-20240430-WA0014_qkxmze.jpg",
+                caption: "1"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770947565/20240824_194434_kd3ikm.jpg",
+                caption: "2"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770946467/IMG-20241013-WA0001_vavv9w.jpg",
+                caption: "3"
+            }
+        ]
     }
     
 ];
