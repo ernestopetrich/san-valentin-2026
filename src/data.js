@@ -106,6 +106,178 @@ export const memories = [
                 caption: "3"
             }
         ]
+    },
+    {
+        id: "album4",
+        type: "album",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770767404/IMG-20240504-WA0044_nnlxi1.jpg",
+        title: "Mates y charlas",
+        date: "2024-05-04",
+        description: "Una de las tantas veces que fuimos a tomar mates al Palacio Ferreira",
+        photos: [
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770767404/IMG-20240504-WA0044_nnlxi1.jpg",
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770767405/20240504_162445_bablx5.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536154/20240504_162316_kbuyps.jpg"
+            }
+        ]
+    },
+    {
+        id: 5,
+        type: "photo",
+        url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536164/20240504_225653_zfbxee.jpg",
+        title: "Noche de Vino",
+        date: "2024-05-04",
+        description: "Que pedo me agarre esa noche"
+    },
+    {
+        id: "album5",
+        type: "album",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536145/20240830_224220_enoiit.jpg",
+        title: "Tiernos",
+        date: "2024-08-30",
+        description: "Fotos de un beso",
+        photos: [
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536145/20240830_224220_enoiit.jpg",
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536134/20240830_224228_xjpfri.jpg"
+            }
+        ]
+    },
+    {
+        id: "album6",
+        type: "album",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536148/20241025_220740_aojgkc.jpg",
+        title: "Nuestro Primer Aniversario",
+        date: "2024-10-25",
+        description: "Celebramos nuestro primer año juntos y coleccion de fotos de ese octubre",
+        photos: [
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536148/20241025_220740_aojgkc.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770948948/20241011_114659_m4ehoq.jpg",
+                caption: "Sos la mejor Fotografa del mundo"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770948840/20241011_113921_knhcd7.jpg",
+                caption: "El modelo no ayuda a veces"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770948902/IMG-20241013-WA0011_klalef.jpg",
+                caption: "Club Paraguay!!!"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949095/IMG-20241014-WA0003_wplijb.jpg",
+                caption: "TORTAAAAA QUE RICOOOO"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949105/IMG-20241014-WA0015_kxtr5y.jpg",
+                caption: "Que sexy estaba jskajskaj"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949113/20241014_095715_znxt5g.jpg",
+                caption: "Que hermoso regalo me hiciste, te amo."
+            }
+        ]
+    },
+    {
+        id: "album7",
+        type: "album",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949486/IMG_5800_fsxhrq.jpg",
+        title: "Vacaciones en Monte Hermoso!",
+        date: "2025-01-03",
+        description: "Nuestro primer viaje juntos a la playa, que hermoso estuvo. Sacamos muchisimas fotos",
+        photos: [
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949486/IMG_5800_fsxhrq.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536127/20250106_152606_qisffp.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949738/IMG-20250104-WA0004_zvzroj.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949728/IMG_5801_ro9lvm.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949726/DSC02743_xvpitb.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949719/IMG_5923_oizfg2.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949711/DSC02813_g3vdfv.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949705/20250109_232209_yzd9zu.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949684/IMG_6168_vyn4qm.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949677/IMG_6213_vdnt6x.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949671/IMG_6215_e9j3ux.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770949665/IMG_6231_es8lsa.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536074/IMG_6080_nq6zxa.jpg"
+            }
+        ]
+    },
+    {
+        id: "album8",
+        type: "album",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770950215/20250316_200716_swbp7j.jpg",
+        title: "La Ginto",
+        date: "2025-03-16",
+        description: "Tantos domingos que pasamos en la ginto, que lindo lugar y que lindo haberlo vivido con vos.",
+        photos: [
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770950215/20250316_200716_swbp7j.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770950056/20250316_202001_nf8vhg.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536134/20250316_200623_er6kpo.jpg"
+            },
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770950055/20250510_220854_i5ksvw.jpg"
+            }
+        ]
+    },
+    {
+        id: 6,
+        type: "photo",
+        url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770536137/20250427_025302_lfrfpy.jpg",
+        title: "Infernales",
+        date: "2025-04-27",
+        description: "Fuimos a ver Infernales con coto y cata, que bien la pasamos."
+    },
+    {
+        id: "album9",
+        type: "album",
+        cover: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770950400/20251116_195813_cpzjqe.jpg",
+        title: "Café",
+        date: "2025-11-16",
+        description: "Algunos de tantos cafés que tomamos.",
+        photos: [
+            {
+                url: "https://res.cloudinary.com/dwl2dp9xo/image/upload/v1770950400/20251116_195813_cpzjqe.jpg"
+            },
+        ]
     }
     
 ];

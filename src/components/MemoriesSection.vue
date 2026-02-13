@@ -361,9 +361,9 @@ h2 {
     border-left: 14px solid white;
 }
 
-/* --- VERSIÓN MÓVIL (Foto Inmersiva) --- */
+/* --- VERSIÓN MÓVIL CORREGIDA (Centrado Perfecto) --- */
 @media (max-width: 768px) {
-    /* 1. Ajustes del Timeline (Ya los tenías, los mantenemos) */
+    /* 1. Ajustes del Timeline (Mantenemos la línea a la izquierda) */
     .timeline-container { padding-left: 0; }
     .timeline-line { left: 25px; transform: none; }
     .timeline-item { justify-content: flex-start; margin-bottom: 150px; padding-left: 0; }
@@ -373,83 +373,124 @@ h2 {
     .timeline-item:nth-child(even) .timeline-content { left: 50px; right: auto; text-align: left; }
     .content-preview::before { display: none; }
     
-    /* --- 2. AJUSTES DEL VISOR (LIGHTBOX) EN MÓVIL --- */
+    /* --- 2. AJUSTES DEL VISOR (LIGHTBOX) --- */
     
-    /* Quitamos el padding para aprovechar cada píxel */
     .viewer-content { 
         padding: 0; 
-        position: relative; /* Necesario para posicionar hijos absolutos */
+        position: relative;
+        width: 100%;
+        height: 100%;
     }
 
-    /* El escenario ocupa TODA la pantalla */
+    /* EL ESCENARIO: Ocupa toda la pantalla */
     .image-stage { 
-        height: 100dvh; /* dvh = dynamic viewport height (mejor para móviles) */
-        width: 100vw;
-        background: black; /* Fondo negro para rellenar bordes si la foto no encaja */
+        height: 100dvh; /* Altura dinámica completa */
+        width: 100vw;   /* Ancho completo */
+        background: black;
+        
+        /* Flexbox para asegurar centrado absoluto de la caja */
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    /* La foto se ajusta pero sin recortarse */
+    /* LA FOTO: Se contiene en el centro */
     .main-photo {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain; /* Mantiene proporción */
+        position: absolute; /* Vital para las transiciones */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        
+        /* ESTO CENTRA LA IMAGEN VISUALMENTE DENTRO DE LA CAJA */
+        object-fit: contain; 
+        
+        z-index: 1; /* Detrás del texto */
     }
 
-    /* --- BOTONES DE NAVEGACIÓN FLOTANTES --- */
+    /* --- CONTROLES FLOTANTES --- */
+    /* Centrados verticalmente */
     .nav-btn {
         position: absolute;
         top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0, 0, 0, 0.3); /* Círculo semitransparente */
-        width: 45px;
-        height: 45px;
+        transform: translateY(-50%); /* Centrado vertical perfecto */
+        background: rgba(255, 255, 255, 0.15); /* Sutil */
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
-        z-index: 3002; /* Encima de la foto */
+        z-index: 3005; /* Encima de todo */
         padding: 0;
-        /* Quitamos el hover effect en móvil porque confunde */
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(4px);
     }
 
-    .prev { left: 15px; }
-    .next { right: 15px; }
+    .prev { left: 10px; }
+    .next { right: 10px; }
 
-    /* Botón cerrar más visible */
+    /* Botón cerrar */
     .btn-close {
-        top: 15px;
-        right: 15px;
-        background: rgba(0, 0, 0, 0.4);
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.5);
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        z-index: 3005;
+        z-index: 3010;
     }
 
-    /* --- CAJA DE TEXTO (CAPTION) --- */
+/* --- CAJA DE TEXTO (CAPTION) --- */
     .info-box {
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 100%;
-        padding: 40px 20px 30px 20px; /* Padding extra abajo para móviles modernos (barra home) */
         
-        /* DEGRADADO MÁGICO: Hace que el texto blanco se lea sobre cualquier foto */
-        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+        /* CORRECCIÓN 1: Usamos right:0 en lugar de width:100% para evitar desbordes */
+        right: 0;
+        width: auto; 
         
+        /* CORRECCIÓN 2: Asegura que el padding no expanda la caja */
+        box-sizing: border-box; 
+        
+        /* Alineación central forzada */
+        text-align: center; 
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centra los hijos flex (header, caption, etc) */
+        
+        padding: 60px 20px 40px 20px; 
+        
+        /* El mismo degradado de antes */
+        background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.5) 70%, transparent 100%);
         z-index: 3003;
-        text-align: left; /* Alineamos a la izquierda para leer mejor */
     }
 
-    .info-header h3 { font-size: 1.2rem; margin-bottom: 5px; }
-    .info-date { font-size: 0.8rem; opacity: 0.8; margin-bottom: 5px; }
-    .caption { font-size: 0.95rem; line-height: 1.4; }
-    .counter { text-align: right; font-size: 0.75rem; opacity: 0.6; margin-top: 5px; }
+    /* Asegúrate también de que el header ocupe el ancho correcto */
+    .info-header {
+        width: 100%;
+        display: flex;       /* Nuevo */
+        flex-direction: column; /* Nuevo */
+        align-items: center; /* Nuevo: Centra título y fecha internamente */
+        margin-bottom: 8px;
+    }
+    
+    /* Y quitamos márgenes laterales que puedan molestar */
+    .caption, .info-header h3, .info-date {
+        margin-left: 0;
+        margin-right: 0;
+        text-align: center;
+    }
+    
+    .counter { 
+        margin-top: 10px; 
+        font-size: 0.8rem; 
+        opacity: 0.6; 
+        width: 100%;
+        text-align: center;
+    }
 }
 
 /* --- VISOR STYLES (Canvas Fijo) --- */
