@@ -67,6 +67,22 @@ onUnmounted(() => {
 });
 
 const startExperience = () => {
+    // 1. Intentar entrar en Pantalla Completa (Inmersivo)
+    const elem = document.documentElement;
+    
+    // Soporte para diferentes navegadores (Chrome, Safari, Firefox, etc.)
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch((err) => {
+            // Si falla (ej: el usuario bloqueó esto), no pasa nada, seguimos igual.
+            console.log("No se pudo entrar en pantalla completa: ", err);
+        });
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+
+    // 2. Emitir el evento para que arranque la música y el scroll
     emit('start');
 };
 </script>
