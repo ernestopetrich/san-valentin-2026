@@ -422,7 +422,7 @@ h2 {
 .letter-body { text-align: center; font-family: 'Playfair Display', serif; }
 .letter-body h2 { color: #e63946; font-size: 2.5rem; margin-bottom: 10px; }
 .letter-date { display: block; color: #888; font-family: sans-serif; font-size: 0.9rem; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px; }
-.letter-text { font-size: 1.5rem; line-height: 1.5rem; color: #444; white-space: pre-line; text-align: left; }
+.letter-text { font-size: 1.2rem; line-height: 1.5rem; color: #444; white-space: pre-line; text-align: left; }
 .letter-footer { font-size: 2rem; margin-top: 40px; }
 .btn-close-letter { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.5rem; color: #aaa; cursor: pointer; }
 
@@ -435,11 +435,16 @@ h2 {
 
 /* --- VERSIÓN MÓVIL (CORREGIDA COMPLETA) --- */
 @media (max-width: 768px) {
+
+
+    
+
+
     /* Timeline ajustado */
     .timeline-container { padding-left: 0; }
     .timeline-line { left: 25px; transform: none; }
     .timeline-item { justify-content: flex-start; margin-bottom: 150px; padding-left: 0; }
-    .timeline-dot { position: absolute; left: 7px; top: 0; background: none; padding: 0; }
+    .timeline-dot { position: absolute; left: 6.5px; top: 0; background: none; padding: 0; }
     .timeline-date { position: absolute; left: 45px; top: -6px; }
     .timeline-content { position: relative; left: 50px; top: 40px; width: calc(100% - 70px); right: auto; text-align: left; }
     .timeline-item:nth-child(even) .timeline-content { left: 50px; right: auto; text-align: left; }
@@ -484,7 +489,36 @@ h2 {
     .counter { margin-top: 10px; font-size: 0.8rem; opacity: 0.6; width: 100%; text-align: center; }
 
     /* Ajuste modal carta */
-    .letter-paper { padding: 30px 20px; }
-    .letter-text { font-size: 1.3rem; }
+    /* --- ARREGLO DEL PAPEL ABIERTO (MODAL) --- */
+    
+    .letter-paper {
+        /* 1. Ancho seguro: 90% del ancho de pantalla (deja margen a los lados) */
+        width: 90vw !important; 
+        
+        /* 2. Centrado automático horizontal */
+        margin: 0 auto !important;
+        
+        /* 3. Evita que se salga de la pantalla */
+        left: 0 !important;
+        right: 0 !important;
+        
+        /* 4. IMPORTANTE: Que el padding no agrande el ancho total */
+        box-sizing: border-box !important;
+        
+        /* Ajustes visuales para móvil */
+        padding: 25px 20px !important; /* Menos relleno para aprovechar espacio */
+        max-height: 85vh; /* Que no sea más alto que la pantalla */
+    }
+    
+    /* Aseguramos que el contenedor padre (el fondo oscuro) centre todo */
+    .letter-overlay {
+        padding: 0 !important; /* Quitamos padding del contenedor para evitar conflictos */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+
+    .letter-text { font-size: 1.2rem; }
 }
 </style>
